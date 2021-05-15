@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { getCustomRepository, Repository } from "typeorm";
+import { Message } from "../models/Message";
 import { MessagesRepository } from "../repositories/MessagesRepository";
 
 class MessagesController {
@@ -8,16 +9,17 @@ class MessagesController {
    constructor() {
       this.messageRepository = getCustomRepository(MessagesRepository);
    }
+   
    async create(req: Request, res: Response) {
       const { admin_id, text, user_id } = req.body;
 
-      const message = messageRepository.create({
+      const message = this.messageRepository.create({
          admin_id,
          text,
          user_id
       })
 
-      await messageRepository.save(message);
+      await this.messageRepository.save(message);
 
       return res.json( message );
    }
@@ -25,7 +27,7 @@ class MessagesController {
    async showByUser(req: Request, res: Response) {
       const { user_id } = req.params; 
    
-      const list = await messageRepository.find({
+      const list = await this.messageRepository.find({
          where: { user_id },
          relations: ["user"],
       });
