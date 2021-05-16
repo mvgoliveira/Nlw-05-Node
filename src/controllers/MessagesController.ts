@@ -1,37 +1,29 @@
 import { Request, Response } from "express";
-import { getCustomRepository, Repository } from "typeorm";
-import { Message } from "../models/Message";
-import { MessagesRepository } from "../repositories/MessagesRepository";
+import { MessagesService } from "../services/MessagesService";
 
-class MessagesController {   
-   async create(req: Request, res: Response) {
-      const { admin_id, text, user_id } = req.body;
+class MessagesController {
+  async create(req: Request, res: Response) {
+    const { admin_id, text, user_id } = req.body;
+    const messagesService = new MessagesService();
 
-      const messageRepository = getCustomRepository(MessagesRepository);
+    const message = await messagesService.create({
+      admin_id,
+      text,
+      user_id,
+    });
 
-      const message = messageRepository.create({
-         admin_id,
-         text,
-         user_id
-      })
+    return res.json(message);
+  }
 
-      await messageRepository.save(message);
+  async showByUser(req: Request, res: Response) {
+    const { id } = req.params;
 
-      return res.json( message );
-   }
+    const messagesService = new MessagesService();
 
-   async showByUser(req: Request, res: Response) {
-      const { user_id } = req.params; 
+    const list = await messagesService.showByUser(id);
 
-      const messageRepository = getCustomRepository(MessagesRepository);
-   
-      const list = await messageRepository.find({
-         where: { user_id },
-         relations: ["user"],
-      });
-
-      return res.json(list);
-   }
+    return res.json(list);
+  }
 }
 
-export { MessagesController }
+export { MessagesController };
