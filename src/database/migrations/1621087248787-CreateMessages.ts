@@ -48,5 +48,4 @@ export class CreateMessages1621087248787 implements MigrationInterface {
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.dropTable("messages");
     }
-
 }
